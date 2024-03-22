@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Księgarnia</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css
+">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+    }
+    .btn-custom {
+      background-color: #007bff;
+      border-color: #007bff;
+      color: #fff;
+    }
+    .btn-custom:hover {
+      background-color: #0056b3;
+      border-color: #0056b3;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h2 {
+      color: #007bff;
+    }
+    form {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    label {
+      font-weight: bold;
+    }
+    .form-control {
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Księgarnia</h2>
+    <div class="row">
+      <div class="col">
+        <button class="btn btn-custom btn-block mb-3" onclick="zakladki('formularzUczniowie')">Uczniowie</button>
+      </div>
+      <div class="col">
+        <button class="btn btn-custom btn-block mb-3" onclick="zakladki('formularzKsiazki')">Książki</button>
+      </div>
+      <div class="col">
+        <button class="btn btn-custom btn-block mb-3" onclick="zakladki('daneZSerwera')">Dane z serwera</button>
+      </div>
+      <div class="col">
+        <button class="btn btn-custom btn-block mb-3" onclick="zakladki('formularzWypozyczenie')">Wypożyczenie</button>
+      </div>
+    </div>
+
+    <div id="formularzUczniowie" style="display: none;">
+      <h2>Dodaj ucznia:</h2>
+      <form id="formUczniowie" action="https://imiki.pl/projekt/sj17/users
+" method="post"></form>
+        <div class="form-group">
+          <label for="imieUcznia">Imię:</label>
+          <input type="text" id="imieUcznia" name="imie" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="nazwiskoUcznia">Nazwisko:</label>
+          <input type="text" id="nazwiskoUcznia" name="nazwisko" class="form-control" required>
+        </div>
+        <button type="submit" >Wyślij</button>
+      </form>
+    </div>
+
+    <div id="formularzKsiazki" style="display: none;">
+      <h2>Dodaj książkę:</h2>
+      <form id="formKsiazki" onsubmit="event.preventDefault(); wyslijFormularz(this)">
+        <div class="form-group">
+          <label for="tytulKsiazki">Tytuł:</label>
+          <input type="text" id="tytulKsiazki" name="tytul" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="autorKsiazki">Autor:</label>
+          <input type="text" id="autorKsiazki" name="autor" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-custom btn-block">Dodaj Książkę</button>
+      </form>
+    </div>
+
+    <div id="daneZSerwera" style="display: none;">
+      <h2>Dane pobrane z serwera:</h2>
+      <div id="wyp"></div>
+    </div>
+
+    <div id="formularzWypozyczenie" style="display: none;">
+      <h2>Wypożycz książkę:</h2>
+      <form id="formWypozyczenie" onsubmit="event.preventDefault(); wyslijWypozyczenie(this)">
+        <div class="form-group">
+          <label for="ksiazkaWyp">Wybierz książkę:</label>
+          <select id="ksiazkaWyp" name="isbn" class="form-control" required>
+           
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="imieUcznia">Imię ucznia:</label>
+          <input type="text" id="imieUcznia" name="imie" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="nazwiskoUcznia">Nazwisko ucznia:</label>
+          <input type="text" id="nazwiskoUcznia" name="nazwisko" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-custom btn-block">Wypożycz książkę</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+function zakladki(zakladka) {
+  const formularzUczniowie = document.getElementById('formularzUczniowie');
+  const formularzKsiazki = document.getElementById('formularzKsiazki');
+  const daneZSerwera = document.getElementById('daneZSerwera');
+  const formularzWypozyczenie = document.getElementById('formularzWypozyczenie');
+  const wypozyczenie = document.getElementById('wypozyczenie');
+
+  if (zakladka === 'formularzUczniowie') {
+    formularzUczniowie.style.display = 'block';
+    formularzKsiazki.style.display = 'none';
+    daneZSerwera.style.display = 'none';
+    formularzWypozyczenie.style.display = 'none';
+    wypozyczenie.style.display = 'none';
+  } else if (zakladka === 'formularzKsiazki') {
+    formularzUczniowie.style.display = 'none';
+    formularzKsiazki.style.display = 'block';
+    daneZSerwera.style.display = 'none';
+    formularzWypozyczenie.style.display = 'none';
+    wypozyczenie.style.display = 'none';
+  } else if (zakladka === 'daneZSerwera') {
+    formularzUczniowie.style.display = 'none';
+    formularzKsiazki.style.display = 'none';
+    daneZSerwera.style.display = 'block';
+    formularzWypozyczenie.style.display = 'none';
+    wypozyczenie.style.display = 'none';
+    pobierzDaneZSerwera();
+  } else if (zakladka === 'formularzWypozyczenie') {
+
+  } else if (zakladka === 'wypozyczenie') {
+    formularzUczniowie.style.display = 'none';
+    formularzKsiazki.style.display = 'none';
+    daneZSerwera.style.display = 'none';
+    formularzWypozyczenie.style.display = 'block';
+    wypozyczenie.style.display = 'block';
+    pobierzKsiazkiDoWypozyczenia();
+  }
+}
+
+function pobierzKsiazkiDoWypozyczenia() {
+  const url = "https://imiki.pl/projekt/API/books
+";
+  const selectKsiazka = document.getElementById("ksiazkaWyp");
+
+  fetch(url)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (data && data.ksiazki && Array.isArray(data.ksiazki)) {
+        data.ksiazki.forEach(item => {
+          const option = document.createElement("option");
+          option.text = item.tytul;
+          option.value = item.ISBN;
+          selectKsiazka.add(option);
+        });
+      } else {
+        throw new Error('Invalid data format');
+      }
+    })
+    .catch(error => {
+      console.error('Błąd:', error);
+      alert("Wystąpił błąd podczas pobierania listy książek do wypożyczenia.");
+    });
+}
+
+function wyslijFormularz(form) {
+  const formData = new FormData(form);
+  fetch(form.action, {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => {
+    if (response.ok) {
+      console.log('Dane zostały wysłane pomyślnie!');
+      alert('Dane zostały wysłane pomyślnie!');
+    } else {
+      console.error('Wystąpił błąd podczas wysyłania danych.');
+      alert('Wystąpił błąd podczas wysyłania danych.');
+    }
+  })
+  .catch(error => {
+    console.error('Błąd:', error);
+    alert('Wystąpił błąd podczas wysyłania danych.');
+  });
+}
+
+
+function wyslijWypozyczenie(form) {
+  const formData = new FormData(form);
+  fetch(form.action, {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => {
+    if (response.ok) {
+      console.log('Wypożyczono książkę pomyślnie!');
+      alert('Wypożyczono książkę pomyślnie!');
+      // Po udanym wypożyczeniu odśwież dane z serwera
+      pokazZakladke('daneZSerwera');
+    } else {
+      console.error('Wystąpił błąd podczas wypożyczania książki.');
+      alert('Wystąpił błąd podczas wypożyczania książki.');
+    }
+  })
+  .catch(error => {
+    console.error('Błąd:', error);
+    alert('Wystąpił błąd podczas wysyłania danych.');
+  });
+}
+    </script>
+</body>
+</html>
